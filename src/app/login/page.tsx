@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { AlertCircle, LogIn, Loader } from 'lucide-react'
 
 export default function LoginPage() {
@@ -16,6 +16,12 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!auth || !isFirebaseConfigured) {
+      setError('Firebase غير مُعد بشكل صحيح. تحقق من متغيرات البيئة في Vercel.')
+      return
+    }
+
     setLoading(true)
 
     try {

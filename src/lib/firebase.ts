@@ -1,7 +1,7 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
-import { getDatabase } from 'firebase/database'
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app'
+import { getAuth, type Auth } from 'firebase/auth'
+import { getFirestore, type Firestore } from 'firebase/firestore'
+import { getDatabase, type Database } from 'firebase/database'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,12 +14,19 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-const firebaseApp: FirebaseApp = getApps().length
-  ? getApps()[0]
-  : initializeApp(firebaseConfig)
+const isFirebaseConfigValid = Object.values(firebaseConfig).every(
+  (value) => typeof value === 'string' && value.trim().length > 0
+)
 
-export const auth = getAuth(firebaseApp)
-export const db = getFirestore(firebaseApp)
-export const rtdb = getDatabase(firebaseApp)
+let firebaseApp: FirebaseApp | undefined
 
-export default firebaseApp
+if (isFirebaseConfigValid) {
+  firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig)
+}
+
+export const isFirebaseConfigured = Boolean(firebaseApp)
+export const auth: Auth | null = firebaseApp ? getAuth(firebaseApp) : null
+export const db: Firestore | null = firebaseApp ? getFirestore(firebaseApp) : null
+export const rtdb: Database | null = firebaseApp ? getDatabase(firebaseApp) : null
+
+export default firebaseApp ?? null

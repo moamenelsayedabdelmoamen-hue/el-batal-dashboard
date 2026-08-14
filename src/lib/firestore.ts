@@ -11,10 +11,16 @@ import {
 import { db } from './firebase'
 import { Order, Driver, Restaurant, Customer, DashboardStats } from '@/types'
 
+const hasFirestore = Boolean(db)
+
 // Orders
 export async function getOrders(
   constraints: QueryConstraint[] = []
 ): Promise<Order[]> {
+  if (!hasFirestore || !db) {
+    return []
+  }
+
   try {
     const q = query(collection(db, 'orders'), ...constraints)
     const snapshot = await getDocs(q)
@@ -31,6 +37,10 @@ export async function getOrders(
 }
 
 export async function getOrderById(orderId: string): Promise<Order | null> {
+  if (!hasFirestore || !db) {
+    return null
+  }
+
   try {
     const docRef = doc(db, 'orders', orderId)
     const docSnap = await getDoc(docRef)
@@ -63,6 +73,10 @@ export async function getOrdersCount(): Promise<number> {
 export async function getDrivers(
   constraints: QueryConstraint[] = []
 ): Promise<Driver[]> {
+  if (!hasFirestore || !db) {
+    return []
+  }
+
   try {
     const q = query(collection(db, 'drivers'), ...constraints)
     const snapshot = await getDocs(q)
@@ -92,6 +106,10 @@ export async function getDriversCount(): Promise<number> {
 export async function getRestaurants(
   constraints: QueryConstraint[] = []
 ): Promise<Restaurant[]> {
+  if (!hasFirestore || !db) {
+    return []
+  }
+
   try {
     const q = query(collection(db, 'restaurants'), ...constraints)
     const snapshot = await getDocs(q)
@@ -121,6 +139,10 @@ export async function getRestaurantsCount(): Promise<number> {
 export async function getCustomers(
   constraints: QueryConstraint[] = []
 ): Promise<Customer[]> {
+  if (!hasFirestore || !db) {
+    return []
+  }
+
   try {
     const q = query(collection(db, 'customers'), ...constraints)
     const snapshot = await getDocs(q)
